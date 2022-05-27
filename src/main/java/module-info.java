@@ -1,4 +1,4 @@
-module org.unibl.etf.javaproject2022 {
+module org.unibl.etf{
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
@@ -10,6 +10,8 @@ module org.unibl.etf.javaproject2022 {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
 
-    opens org.unibl.etf.javaproject2022 to javafx.fxml;
-    exports org.unibl.etf.javaproject2022;
+    exports org.unibl.etf.controllers;
+    opens org.unibl.etf.controllers to javafx.fxml;
+    exports org.unibl.etf;
+    opens org.unibl.etf to javafx.fxml;
 }

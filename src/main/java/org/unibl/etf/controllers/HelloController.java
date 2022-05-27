@@ -1,4 +1,4 @@
-package org.unibl.etf.javaproject2022;
+package org.unibl.etf.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
