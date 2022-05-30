@@ -1,0 +1,79 @@
+.root{
+    -fx-background-color: #344955;
+}
+
+.box{
+    -fx-border-color: #fff;
+}
+
+.playerColorRED{
+    -fx-text-fill: #ff1d00;
+}
+
+.playerColorYELLOW{
+    -fx-text-fill: #e4db33;
+}
+
+.playerColorGREEN{
+    -fx-text-fill: #46bc25;
+}
+
+.playerColorBLUE{
+    -fx-text-fill: #4492ff;
+}
+
+.errorMsg{
+    -fx-text-fill: #d54150;
+}
+
+.button{
+    -fx-background-color: #f9aa33;
+    -fx-text-fill: #fff;
+}
+
+.button:hover{
+    -fx-text-fill: #f9aa33;
+    -fx-background-color: #fff;
+}
+
+.grid{
+    -fx-background-color: #fff;
+}
+
+#tile{
+    -fx-border-color: #000;
+}
+
+.list-view {
+    -fx-background-color: transparent, transparent;
+    -fx-background-insets: 0, 1;
+    -fx-padding: 1;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #f9aa33;
+    -fx-text-fill: #fff;
+}
+
+.list-cell {
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.list-cell:odd {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: #344955;
+}
+
+.list-cell:even {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: #2a3b45 ;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #f9aa33;
+    -fx-text-fill: white;
+}
