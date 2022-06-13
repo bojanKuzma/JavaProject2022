@@ -104,7 +104,7 @@
                </font>
             </Label>
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="startStopBtn" minHeight="50.0" minWidth="190.0" mnemonicParsing="false" text="Pokreni/Zaustavi">
+            <Button minHeight="50.0" minWidth="190.0" mnemonicParsing="false" onAction="#startPauseGame" text="Pokreni/Zaustavi">
                <HBox.margin>
                   <Insets right="5.0" />
                </HBox.margin>
@@ -124,7 +124,7 @@
                <Insets left="10.0" right="10.0" />
             </VBox.margin>
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Label fx:id="playerOneLbl" alignment="CENTER" minWidth="200.0" styleClass="playerColorRED" text="Igrac 1" HBox.hgrow="ALWAYS">
+            <Label id="RED" fx:id="playerOneLbl" alignment="CENTER" minWidth="200.0" styleClass="playerColorRED" text="Igrac 1" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
@@ -137,7 +137,7 @@
                </tooltip>
             </Label>
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Label fx:id="playerTwoLbl" alignment="CENTER" minWidth="200.0" styleClass="playerColorYELLOW" text="Igrac 2" HBox.hgrow="ALWAYS">
+            <Label id="YELLOW" fx:id="playerTwoLbl" alignment="CENTER" minWidth="200.0" styleClass="playerColorYELLOW" text="Igrac 2" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
@@ -150,7 +150,7 @@
                </tooltip>
             </Label>
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Label fx:id="playerThreeLbl" alignment="CENTER" minWidth="200.0" styleClass="playerColorGREEN" text="Igrac 3" HBox.hgrow="ALWAYS">
+            <Label id="GREEN" fx:id="playerThreeLbl" alignment="CENTER" minWidth="200.0" styleClass="playerColorGREEN" text="Igrac 3" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
@@ -163,7 +163,7 @@
                </tooltip>
             </Label>
             <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Label fx:id="playerFourLbl" alignment="CENTER" minWidth="200.0" styleClass="playerColorBLUE" text="Igrac 4" HBox.hgrow="ALWAYS">
+            <Label id="BLUE" fx:id="playerFourLbl" alignment="CENTER" minWidth="200.0" styleClass="playerColorBLUE" text="Igrac 4" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
@@ -180,14 +180,14 @@
       </VBox>
    </top>
    <left>
-      <VBox fx:id="pawnList" alignment="TOP_CENTER" minHeight="553.0" prefHeight="533.0" prefWidth="149.0" spacing="5.0" styleClass="box" BorderPane.alignment="TOP_CENTER">
+      <VBox alignment="TOP_CENTER" minHeight="553.0" prefHeight="533.0" prefWidth="149.0" spacing="5.0" styleClass="box" BorderPane.alignment="TOP_CENTER">
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" top="14.0" />
          </BorderPane.margin>
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
-         <ListView fx:id="list" fixedCellSize="35.0" onMouseClicked="#openPawnModal" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+         <ListView fx:id="pawnList" fixedCellSize="35.0" onMouseClicked="#openPawnModal" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
             <tooltip>
                <Tooltip text="Open pawn window">
                   <font>
@@ -238,7 +238,7 @@
                </Label>
             </VBox>
          </VBox>
-         <Label text="Vrijeme tranja igre: 10s" textFill="WHITE">
+         <Label fx:id="timerLbl" text="Vrijeme tranja igre: 0s" textFill="WHITE">
             <font>
                <Font size="18.0" />
             </font>

@@ -17,8 +17,8 @@ public class ConfigReader {
     public static final int MAX_PLAYERS = 4;
     public static final String CONFIG_PATH = "config.properties";
     public static int numOfPlayers;
-    public static int numOfRows;
-    public static int numOfColumns;
+    public static int mapSize;
+
     public static ArrayList<String> playerNames = new ArrayList<>();
 
     private ConfigReader(){}
@@ -29,8 +29,7 @@ public class ConfigReader {
         try (FileInputStream fileInputStream = new FileInputStream(CONFIG_PATH)) {
             properties.load(fileInputStream);
 
-            numOfRows = Integer.parseInt(properties.getProperty("map_rows"));
-            numOfColumns = Integer.parseInt(properties.getProperty("map_columns"));
+            mapSize = Integer.parseInt(properties.getProperty("map_size"));
 
             for (int i = 0; i < MAX_PLAYERS; i++)
                 playerNames.add(properties.getProperty("player" + i));
@@ -42,8 +41,7 @@ public class ConfigReader {
             e.printStackTrace();//todo logger
         }
 
-        if(numOfColumns < MIN_GRID_SIZE || numOfColumns > MAX_GRID_SIZE || numOfRows < MIN_GRID_SIZE ||
-                numOfRows > MAX_GRID_SIZE)
+        if(mapSize < MIN_GRID_SIZE || mapSize > MAX_GRID_SIZE)
             throw new ConfigException("Row size or column size must be equal or greater to 7 and lower or equal to 10!");
 
         if(playerNames.size() < MIN_PLAYER_NUMBER)
