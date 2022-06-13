@@ -1,7 +1,9 @@
 package org.unibl.etf.util;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.ConstraintsBase;
 import javafx.stage.Stage;
 import org.unibl.etf.Main;
 
@@ -28,5 +30,12 @@ public class Util {
         stage.resizableProperty().setValue(resizable);
         stage.setScene(scene);
         return fxmlLoader.getController();
+    }
+
+    public static void removeGridConstraints(int difference, ObservableList<? extends ConstraintsBase> constraints){
+        while(difference > 0){
+            constraints.remove(0);
+            difference--;
+        }
     }
 }

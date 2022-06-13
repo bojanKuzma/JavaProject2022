@@ -86,7 +86,7 @@ public class RandomGenerator {
             }
             else
                 cards.add(new SpecialCard(
-                        new Image(String.valueOf(Main.class.getResource("img/cards/4.png"))),
+                        new Image(String.valueOf(Main.class.getResource("img/cards/5.png"))),
                         random.nextInt(MAX_HOLES_ON_MAP  + 1)
                         )
                 );

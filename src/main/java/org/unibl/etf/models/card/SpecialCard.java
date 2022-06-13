@@ -6,4 +6,9 @@ public class SpecialCard extends Card{
     public SpecialCard(Image image, int number) {
         super(image, number);
     }
+
+    @Override
+    public String toString() {
+        return "Specijalna karta - pojaviće se rupe na " + number + " polja";
+    }
 }

@@ -25,6 +25,7 @@ import org.unibl.etf.models.tile.Tile;
 import org.unibl.etf.models.timer.Timer;
 import org.unibl.etf.util.ConfigReader;
 import org.unibl.etf.util.RandomGenerator;
+import org.unibl.etf.util.Util;
 
 import java.net.URL;
 import java.util.*;
@@ -85,8 +86,8 @@ public class MainController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         //initializing grid
-        removeGridConstraints(grid.getRowCount() - ConfigReader.mapSize, grid.getRowConstraints());
-        removeGridConstraints(grid.getColumnCount() - ConfigReader.mapSize, grid.getColumnConstraints());
+        Util.removeGridConstraints(grid.getRowCount() - ConfigReader.mapSize, grid.getRowConstraints());
+        Util.removeGridConstraints(grid.getColumnCount() - ConfigReader.mapSize, grid.getColumnConstraints());
 
         //adding stack panes to every cell with image view in stack pane
         for(int i = 0; i< ConfigReader.mapSize; i++) {
@@ -147,17 +148,18 @@ public class MainController implements Initializable {
             allPawns.add(RandomGenerator.generatePawns(label.getId()));
 
         LinkedList<Pawn> reshuffledPawns = new LinkedList<>();
+        LinkedList<Integer> turnOrderTemp = new LinkedList<>(turnOrder);
 
         //shuffling player turn order
         int counter = 0;
         while(counter != ConfigReader.numOfPlayers){
-            int order = turnOrder.remove();
+            int order = turnOrderTemp.remove();
             LinkedList<Pawn> temp = allPawns.get(order);
 
 
             if(!temp.isEmpty()) {
                 reshuffledPawns.add(temp.remove());
-                turnOrder.add(order);
+                turnOrderTemp.add(order);
             }
             else
                 counter++;
@@ -187,17 +189,16 @@ public class MainController implements Initializable {
 
         System.out.println();
 
+        cardImg.setImage(cardDeck.get(0).getImage());
+        cardLbl.setText(cardDeck.get(0).toString());
+
+
 
 
 
     }
 
-    private void removeGridConstraints(int difference, ObservableList<? extends ConstraintsBase> constraints){
-        while(difference > 0){
-            constraints.remove(0);
-            difference--;
-        }
-    }
+
 
     private void addToGrid(int x, int y, Tile tile){
         grid.add(tile, y, x);

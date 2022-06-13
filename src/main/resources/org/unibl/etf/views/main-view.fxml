@@ -224,9 +224,9 @@
                <ImageView fx:id="cardImg" fitHeight="222.0" fitWidth="163.0" pickOnBounds="true" preserveRatio="true">
 
                </ImageView>
-               <Label fx:id="cardLbl" prefHeight="51.0" prefWidth="60.0" text="Label" textFill="WHITE">
+               <Label fx:id="cardLbl" alignment="CENTER" contentDisplay="CENTER" prefHeight="51.0" prefWidth="212.0" text="Label" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                   <font>
-                     <Font name="Segoe UI Bold" size="24.0" />
+                     <Font name="Segoe UI Bold" size="16.0" />
                   </font>
                   <tooltip>
                      <Tooltip text="Card description">
