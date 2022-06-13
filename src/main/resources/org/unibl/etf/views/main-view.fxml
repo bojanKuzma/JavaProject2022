@@ -238,7 +238,7 @@
                </Label>
             </VBox>
          </VBox>
-         <Label fx:id="timerLbl" text="Vrijeme tranja igre: 0s" textFill="WHITE">
+         <Label fx:id="timerLbl" text="Vrijeme tranja igre: 0 s" textFill="WHITE">
             <font>
                <Font size="18.0" />
             </font>

@@ -1,6 +1,5 @@
 package org.unibl.etf.controllers;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import org.unibl.etf.Main;
+import org.unibl.etf.models.card.Card;
 import org.unibl.etf.models.pawn.Pawn;
 import org.unibl.etf.models.tile.StandardTile;
 import org.unibl.etf.models.tile.Tile;
@@ -37,12 +37,9 @@ public class MainController implements Initializable {
     @FXML
     public Label numberOfGamesLbl;
 
-
     private static final AtomicBoolean stopGame = new AtomicBoolean(true);
 
     boolean firstTimeStarted = true;
-
-
 
     @FXML
     public HBox playerNameHBox;
@@ -79,6 +76,8 @@ public class MainController implements Initializable {
 
 
     private final HashMap<Integer,Tile> map = new HashMap<>();
+
+    public static final LinkedList<Card> cardDeck = new LinkedList<>();
 
 
 
@@ -184,6 +183,9 @@ public class MainController implements Initializable {
         //initializing left menu
         pawnList.setItems(FXCollections.observableArrayList(reshuffledPawns));
 
+        cardDeck.addAll(RandomGenerator.generateDeck());
+
+        System.out.println();
 
 
 
@@ -215,11 +217,14 @@ public class MainController implements Initializable {
     public synchronized void startPauseGame(ActionEvent actionEvent) {
         actionEvent.consume();
         if(firstTimeStarted){
+            //timer on the right menu
             Timer timer = new Timer(stopGame, timerLbl);
             timer.start();
+
             //set to prevent starting already started threads
             firstTimeStarted = false;
         }
+
         //start/pause game
         stopGame.getAndSet(!stopGame.get());
     }
