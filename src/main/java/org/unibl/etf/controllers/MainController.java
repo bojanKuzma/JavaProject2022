@@ -5,10 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -16,6 +13,8 @@ import javafx.scene.layout.ConstraintsBase;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.unibl.etf.Main;
 import org.unibl.etf.models.card.Card;
@@ -27,6 +26,7 @@ import org.unibl.etf.util.ConfigReader;
 import org.unibl.etf.util.RandomGenerator;
 import org.unibl.etf.util.Util;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -131,6 +131,12 @@ public class MainController implements Initializable {
         map.get(17).setImage(new Image(String.valueOf(Main.class.getResource("img/eagle/RED.png"))));
         map.get(16).setImage(new Image(String.valueOf(Main.class.getResource("img/eagle/BLUE.png"))));
         map.get(15).setImage(new Image(String.valueOf(Main.class.getResource("img/eagle/GREEN.png"))));
+        map.get(25).setImage(new Image(String.valueOf(Main.class.getResource("img/diamond.png"))));
+
+        Tooltip tooltip = new Tooltip("This is a diamond");
+        Tooltip.install(map.get(25), tooltip);
+        Tooltip.uninstall(map.get(25), tooltip);
+
         //todo remove end
 
         //getting all labels that need to be set
@@ -187,8 +193,6 @@ public class MainController implements Initializable {
 
         cardDeck.addAll(RandomGenerator.generateDeck());
 
-        System.out.println();
-
         cardImg.setImage(cardDeck.get(0).getImage());
         cardLbl.setText(cardDeck.get(0).toString());
 
@@ -207,9 +211,23 @@ public class MainController implements Initializable {
 
     public void openPawnModal(MouseEvent mouseEvent) {
         mouseEvent.consume();
-        if (pawnList.getSelectionModel().getSelectedItem() != null)
-            System.out.println(pawnList.getSelectionModel().getSelectedItem());
+        if (pawnList.getSelectionModel().getSelectedItem() != null) {
+            Stage stage = new Stage();
+            stage.initOwner(grid.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            try {
+                Util.createWindow("views/modal-view.fxml"
+                        ,Main.TITLE + ' ' + pawnList.getSelectionModel().getSelectedItem()
+                        , stage, Main.MIN_HEIGHT + Main.PROGRAM_TITLE_BAR_HEIGHT,
+                        Main.MIN_WIDTH + Main.PROGRAM_SCROLLBAR_WIDTH,
+                        true);
+                stage.show();
+            } catch (IOException e) {
+                //todo logger
+                e.printStackTrace();
+            }
             //todo pozovi novi prozor i pokazi ga
+        }
 
         //deselect field
         pawnList.getSelectionModel().select(-1);//todo magic number

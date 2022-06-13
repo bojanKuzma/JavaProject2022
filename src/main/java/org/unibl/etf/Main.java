@@ -13,10 +13,10 @@ import java.io.IOException;
 
 public class Main extends Application {
     public static final String TITLE = "Java Simulation 2022 - Diamond Circle";
-    private static final int MIN_HEIGHT = 720;
-    private static final int MIN_WIDTH = 1080;
-    private static final int PROGRAM_TITLE_BAR_HEIGHT = 37;
-    private static final int PROGRAM_SCROLLBAR_WIDTH = 16;
+    public static final int MIN_HEIGHT = 720;
+    public static final int MIN_WIDTH = 1080;
+    public static final int PROGRAM_TITLE_BAR_HEIGHT = 37;
+    public static final int PROGRAM_SCROLLBAR_WIDTH = 16;
 
     @Override
     public void start(Stage stage) throws IOException {
