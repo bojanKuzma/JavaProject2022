@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.unibl.etf.Main;
 import org.unibl.etf.models.card.Card;
+import org.unibl.etf.models.game.Game;
 import org.unibl.etf.models.pawn.Pawn;
 import org.unibl.etf.models.tile.StandardTile;
 import org.unibl.etf.models.tile.Tile;
@@ -80,6 +81,8 @@ public class MainController implements Initializable {
 
     public static final LinkedList<Card> cardDeck = new LinkedList<>();
 
+    LinkedList<Integer> turnOrder = new LinkedList<>();
+
 
 
     @Override
@@ -109,7 +112,7 @@ public class MainController implements Initializable {
         }
 
         //getting turn order of players
-        LinkedList<Integer> turnOrder = new LinkedList<>();
+
         int orderOfPlayers = 0;
         while(orderOfPlayers < ConfigReader.numOfPlayers){
             turnOrder.add(orderOfPlayers);
@@ -119,19 +122,7 @@ public class MainController implements Initializable {
         Collections.shuffle(turnOrder);
 
         //todo remove
-        map.get(48).setImage(new Image(String.valueOf(Main.class.getResource("img/bear/YELLOW.png"))));
-        map.get(47).setImage(new Image(String.valueOf(Main.class.getResource("img/bear/RED.png"))));
-        map.get(46).setImage(new Image(String.valueOf(Main.class.getResource("img/bear/BLUE.png"))));
-        map.get(45).setImage(new Image(String.valueOf(Main.class.getResource("img/bear/GREEN.png"))));
-        map.get(8).setImage(new Image(String.valueOf(Main.class.getResource("img/horse/YELLOW.png"))));
-        map.get(7).setImage(new Image(String.valueOf(Main.class.getResource("img/horse/RED.png"))));
-        map.get(6).setImage(new Image(String.valueOf(Main.class.getResource("img/horse/BLUE.png"))));
-        map.get(5).setImage(new Image(String.valueOf(Main.class.getResource("img/horse/GREEN.png"))));
-        map.get(18).setImage(new Image(String.valueOf(Main.class.getResource("img/eagle/YELLOW.png"))));
-        map.get(17).setImage(new Image(String.valueOf(Main.class.getResource("img/eagle/RED.png"))));
-        map.get(16).setImage(new Image(String.valueOf(Main.class.getResource("img/eagle/BLUE.png"))));
-        map.get(15).setImage(new Image(String.valueOf(Main.class.getResource("img/eagle/GREEN.png"))));
-        map.get(25).setImage(new Image(String.valueOf(Main.class.getResource("img/diamond.png"))));
+
 
         Tooltip tooltip = new Tooltip("This is a diamond");
         Tooltip.install(map.get(25), tooltip);
@@ -191,10 +182,8 @@ public class MainController implements Initializable {
         //initializing left menu
         pawnList.setItems(FXCollections.observableArrayList(reshuffledPawns));
 
+        //creating deck of cards
         cardDeck.addAll(RandomGenerator.generateDeck());
-
-        cardImg.setImage(cardDeck.get(0).getImage());
-        cardLbl.setText(cardDeck.get(0).toString());
 
 
 
@@ -239,7 +228,9 @@ public class MainController implements Initializable {
             //timer on the right menu
             Timer timer = new Timer(stopGame, timerLbl);
             timer.start();
-
+            Game game = new Game(ConfigReader.playerNames, new LinkedList<>(pawnList.getItems()),stopGame,
+                    turnOrder , map, cardDeck, cardImg, cardLbl, cardDescriptionLbl);
+            game.start();
             //set to prevent starting already started threads
             firstTimeStarted = false;
         }

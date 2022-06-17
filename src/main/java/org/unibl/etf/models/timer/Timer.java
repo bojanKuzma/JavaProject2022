@@ -38,7 +38,6 @@ public class Timer extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();//todo logger
             }
-            System.out.println(elapsedTimeSeconds);
         }
     }
 

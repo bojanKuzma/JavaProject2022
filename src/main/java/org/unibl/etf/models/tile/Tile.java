@@ -6,11 +6,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public abstract class Tile extends StackPane {
-    public boolean isOccupied = false;
+    public AtomicBoolean isOccupied = new AtomicBoolean(false);
     public ImageView imageView = new ImageView();
     private static final String CSS_CLASS = "tile";
     protected GridPane grid;
+    public int diamonds = 0;
 
 
     public Tile(GridPane grid){
@@ -28,7 +31,10 @@ public abstract class Tile extends StackPane {
         this.setId(CSS_CLASS);
     }
 
-    public void setImage(Image image){
+    public synchronized void setImage(Image image){
+        this.isOccupied.set(image != null);
         Platform.runLater(() -> imageView.setImage(image));
     }
+
+
 }
