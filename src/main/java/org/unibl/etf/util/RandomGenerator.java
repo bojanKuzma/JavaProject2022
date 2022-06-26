@@ -100,7 +100,7 @@ public class RandomGenerator {
         Collections.shuffle(cards);
         return cards;
     }
-//todo izmjeni logiku
+
     public static ArrayList<Integer> getFields(Card c){
         Random random = new Random();
         ArrayList<Integer> result = new ArrayList<>();

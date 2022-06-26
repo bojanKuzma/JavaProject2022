@@ -7,6 +7,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import org.unibl.etf.Main;
 import org.unibl.etf.models.pawn.Pawn;
+import org.unibl.etf.util.ConfigReader;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -46,5 +47,8 @@ public abstract class Tile extends StackPane {
             Platform.runLater(() -> imageView.setImage(diamondImage));
     }
 
-
+    @Override
+    public String toString() {
+        return String.valueOf(GridPane.getRowIndex(this) * ConfigReader.mapSize +GridPane.getColumnIndex(this));
+    }
 }

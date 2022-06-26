@@ -3,7 +3,6 @@ package org.unibl.etf.models.game;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import org.unibl.etf.Main;
 import org.unibl.etf.models.card.Card;
 import org.unibl.etf.models.card.Stoppable;
@@ -15,7 +14,16 @@ import org.unibl.etf.models.tile.Tile;
 import org.unibl.etf.util.ConfigReader;
 import org.unibl.etf.util.RandomGenerator;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -24,8 +32,8 @@ import java.util.logging.Level;
 public class Game extends Thread {
     public static transient LinkedList<Player> players = new LinkedList<>();
     private static final int END_FIELD = 5;
-    private static final int TIME_WAIT = 345;
-    private static final int TIME_WAIT_SPECIAL = 2000;
+    private static final int TIME_WAIT = 100;
+    private static final int TIME_WAIT_SPECIAL = 100;
     private static final String CSS_SELECTED = "selected";
     private static final String CSS_HOLE = "hole";
     private final transient LinkedList<Pawn> pawns;
@@ -35,6 +43,7 @@ public class Game extends Thread {
     private final ImageView cardImg;
     private final Label cardLbl;
     private final AtomicBoolean stopGame;
+    private final HashMap<String, LinkedList<String>> results = new HashMap<>();
 
 
 
@@ -96,12 +105,15 @@ public class Game extends Thread {
 
                             tile.setImage(null);
 
+
                             //check for flag at the end of turn
                             if(tile.pawn.equals(pawn))
                                 dropped = true;
                             else
-                                for(Player p : tempPlayers)
-                                    p.pawns.remove(tile.pawn);
+                                for(Player p : tempPlayers) {
+                                    if(p.pawns.remove(tile.pawn))
+                                        writeToResults(tile.pawn, p);
+                                }
                         }
 
                     }
@@ -127,7 +139,7 @@ public class Game extends Thread {
                     Platform.runLater(() -> {
                         turnDescriptionLbl.setText("Na potezu je " + playerName + ", " + pawn + ", prelazi "
                                 + tilesToMove + " polja, pomjera se sa pozicije " + pawn.currentPosition
-                                + " na poziciju " + (pawn.currentPosition + tilesToMove));
+                                + " za " + tilesToMove + " polja");
                     });
 
 
@@ -148,10 +160,23 @@ public class Game extends Thread {
                             // first check if the start position displayed no need to set the css because
                             // the pawn starts off map
                             pawn.addTile(map.get(pawn.currentPosition));
-                            if(!map.get(pawn.currentPosition).isOccupied.get())
+                            if(!map.get(pawn.currentPosition).isOccupied.get()) {
                                 map.get(pawn.currentPosition).setId(CSS_SELECTED);
+                                map.get(pawn.currentPosition).pawn = pawn;
+                            }
                             nextPosition = pawn.currentPosition;
                         }
+
+                        int addDiamonds = map.get(nextPosition).diamonds;
+                        map.get(nextPosition).diamonds = 0;
+                        pawn.diamonds += addDiamonds;
+                        if (addDiamonds > 0)
+                            Platform.runLater(() -> {
+                                turnDescriptionLbl.setText("Na potezu je " + playerName + ", " + pawn + ", prelazi "
+                                        + tilesToMove + " polja, pomjera se sa pozicije " + pawn.currentPosition
+                                        + " za " + tilesToMove + " polja i ima " + pawn.diamonds + " dijamanata");
+                            });
+
 
 
                         while (map.get(nextPosition).isOccupied.get() || pawn.hasBeenTraversed(map.get(nextPosition)) && pawn.currentPosition!=nextPosition) {
@@ -159,9 +184,28 @@ public class Game extends Thread {
                             fieldsTraversed++;
                             pawn.addTile(map.get(nextPosition));
                             nextPosition = findNext(pawn);
+                            addDiamonds = map.get(nextPosition).diamonds;
+                            pawn.diamonds += addDiamonds;
+                            map.get(nextPosition).diamonds = 0;
+                            if (addDiamonds > 0)
+                                Platform.runLater(() -> {
+                                    turnDescriptionLbl.setText("Na potezu je " + playerName + ", " + pawn + ", prelazi "
+                                            + tilesToMove + " polja, pomjera se sa pozicije " + pawn.currentPosition
+                                            + " za " + tilesToMove + " polja i ima " + pawn.diamonds + " dijamanata");
+                                });
                         }
 
                         Tile tile = map.get(nextPosition);
+
+                        addDiamonds = map.get(nextPosition).diamonds;
+                        pawn.diamonds += addDiamonds;
+                        map.get(nextPosition).diamonds = 0;
+                        if (addDiamonds > 0)
+                            Platform.runLater(() -> {
+                                turnDescriptionLbl.setText("Na potezu je " + playerName + ", " + pawn + ", prelazi "
+                                        + tilesToMove + " polja, pomjera se sa pozicije " + pawn.currentPosition
+                                        + " za " + tilesToMove + " polja i ima " + pawn.diamonds + " dijamanata");
+                            });
 
                         // set the next tile css so the players sees that the selected pawn will move to there or
                         // if no pawn is selected it starts off map
@@ -197,7 +241,7 @@ public class Game extends Thread {
                         tile.pawn = pawn;
                         pawn.currentPosition = nextPosition;
                         previousPosition = nextPosition;
-                        pawn.diamonds += tile.diamonds;
+                       // pawn.diamonds += tile.diamonds;
                         pawn.addTile(tile);
                         fieldsTraversed++;
 
@@ -225,6 +269,9 @@ public class Game extends Thread {
                 if(!checkIfEnd(pawn) && !dropped) {
                     currentPlayer.pawns.add(pawn);
                 }
+                else{
+                    writeToResults(pawn, currentPlayer);
+                }
 
                 //switch player from front to back
                 currentPlayer = tempPlayers.remove();
@@ -236,6 +283,8 @@ public class Game extends Thread {
                 cardDeck.add(card);
                 }
         }
+        writeResult();
+        stopGame.set(true);
         System.out.println("Gotovo");
     }
 
@@ -299,6 +348,40 @@ public class Game extends Thread {
         return counter == END_FIELD;
     }
 
+    private void writeToResults(Pawn p, Player player){
+        StringBuilder result = new StringBuilder(p.toString() + " " + p.getColor().toString() + "    - pređeni put (");
+        for(Tile t : p.getTraversedTiles())
+            result.append(t.toString()).append('-');
+        result.append(") - stigla do cilja ").append(p.reachedEnd);
+        if(!results.containsKey(player.name))
+            results.put(player.name, new LinkedList<>());
+        results.get(player.name).add(String.valueOf(result));
+    }
+
+    private void writeResult(){
+        DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
+        Date date = new Date();
+
+        Path path = Paths.get("results/IGRA_" + dateFormat.format(date) + ".txt");
+        try(BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)){
+            results.forEach((k,v) -> {
+                try {
+                    writer.write(k);
+                    writer.write('\n');
+
+                    for(String result : v) {
+                        writer.write(result);
+                        writer.write('\n');
+                    }
+                } catch (IOException e) {
+                    Main.LOGGER.log(Level.SEVERE, e.toString(), e);
+                }
+            });
+
+        }catch(IOException ex){
+            Main.LOGGER.log(Level.SEVERE, ex.toString(), ex);
+        }
+    }
 
 
 }

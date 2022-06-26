@@ -59,7 +59,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="67.0" prefWidth="591.0">
                <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-               <Label fx:id="cardDescriptionLbl" alignment="CENTER" prefHeight="101.0" prefWidth="367.0" text="Na potezu je igrač 2, figura 3, prelazi 3 polja, pomjera se sa pozicije 4 na poziciju 28 " textAlignment="CENTER" textFill="WHITE" wrapText="true">
+               <Label fx:id="cardDescriptionLbl" alignment="CENTER" prefHeight="101.0" prefWidth="367.0" text="ZAPOČNITE IGRU" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                   <font>
                      <Font size="14.0" />
                   </font>
@@ -85,7 +85,7 @@
             <VBox.margin>
                <Insets left="10.0" right="10.0" />
             </VBox.margin>
-            <Label fx:id="numberOfGamesLbl" alignment="CENTER" prefHeight="70.0" prefWidth="190.0" text="Trenutni broj odigranih igara: 10" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+            <Label fx:id="numberOfGamesLbl" alignment="CENTER" prefHeight="70.0" prefWidth="190.0" text="Trenutni broj odigranih igara: " textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <font>
                   <Font size="18.0" />
                </font>

@@ -28,6 +28,8 @@ import org.unibl.etf.util.Util;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
@@ -88,6 +90,14 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            numberOfGamesLbl.setText(numberOfGamesLbl.getText() + " " +
+                    Files.list(Paths.get("results"))
+                    .filter(p -> p.toFile().isFile())
+                    .count());
+        } catch (IOException e) {
+            Main.LOGGER.log(Level.WARNING, e.toString(), e);
+        }
 
         //initializing grid
         Util.removeGridConstraints(grid.getRowCount() - ConfigReader.mapSize, grid.getRowConstraints());
@@ -230,7 +240,9 @@ public class MainController implements Initializable {
                     map, cardDeck, cardImg, cardLbl, cardDescriptionLbl);
             game.start();
             GhostPawn ghostPawn = new GhostPawn(map, stopGame);
-            new Thread(ghostPawn).start();
+            Thread thread = new Thread(ghostPawn);
+            thread.setDaemon(true);
+            thread.start();
             //set to prevent starting already started threads
             firstTimeStarted = false;
         }
