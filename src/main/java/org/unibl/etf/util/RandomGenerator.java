@@ -5,8 +5,10 @@ import org.unibl.etf.Main;
 import org.unibl.etf.models.card.Card;
 import org.unibl.etf.models.card.NormalCard;
 import org.unibl.etf.models.card.SpecialCard;
+import org.unibl.etf.models.game.Game;
 import org.unibl.etf.models.pawn.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
@@ -19,11 +21,11 @@ public class RandomGenerator {
     private static final int TWO_FIELDS = 2;
     private static final int THREE_FIELDS = 3;
     private static final int FOUR_FIELDS = 4;
-    private static final int MAX_PAWNS = 3;
+    private static final int MAX_PAWNS = 4;
     private static final double NORMAL_PAWN_CHANCE = 0.3333;
     private RandomGenerator(){}
 
-    public static LinkedList<Pawn> generatePawns(String color){
+    public static LinkedList<Pawn> generatePawns(String color, String playerName){
         LinkedList<Pawn> generatedPawnList = new LinkedList<>();
         for (int i = 0; i < MAX_PAWNS; i++) {
             double chance = Math.random();
@@ -49,7 +51,10 @@ public class RandomGenerator {
                         )
                 );
         }
-
+        Player player = new Player();
+        player.pawns = new LinkedList<>(generatedPawnList);
+        player.name = playerName;
+        Game.players.add(player);
         return  generatedPawnList;
     }
 
@@ -87,12 +92,31 @@ public class RandomGenerator {
             else
                 cards.add(new SpecialCard(
                         new Image(String.valueOf(Main.class.getResource("img/cards/5.png"))),
-                        random.nextInt(MAX_HOLES_ON_MAP  + 1)
+                        random.nextInt(MAX_HOLES_ON_MAP) + 2
                         )
                 );
 
         }
         Collections.shuffle(cards);
         return cards;
+    }
+//todo izmjeni logiku
+    public static ArrayList<Integer> getFields(Card c){
+        Random random = new Random();
+        ArrayList<Integer> result = new ArrayList<>();
+        int counter = 0;
+        while(counter < c.getNumber()) {
+            int x = random.nextInt(ConfigReader.mapSize + 1);
+            int y = random.nextInt(ConfigReader.mapSize + 1);
+            int calculated = x * ConfigReader.mapSize + y;
+            while(result.contains(calculated) || calculated > ConfigReader.mapSize * ConfigReader.mapSize - 1){
+                x = random.nextInt(ConfigReader.mapSize + 1);
+                y = random.nextInt(ConfigReader.mapSize + 1);
+                calculated = x * ConfigReader.mapSize + y;
+            }
+            result.add(calculated);
+            counter++;
+        }
+        return result;
     }
 }

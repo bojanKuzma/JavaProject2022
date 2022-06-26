@@ -1,5 +1,6 @@
 package org.unibl.etf.util;
 
+import org.unibl.etf.Main;
 import org.unibl.etf.exceptions.ConfigException;
 
 import java.io.FileInputStream;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class ConfigReader {
@@ -38,7 +40,7 @@ public class ConfigReader {
             distinctPlayerList = playerNames.stream().distinct().collect(Collectors.toList());
 
         } catch (IOException e) {
-            e.printStackTrace();//todo logger
+            Main.LOGGER.log(Level.WARNING, e.toString(), e);
         }
 
         if(mapSize < MIN_GRID_SIZE || mapSize > MAX_GRID_SIZE)

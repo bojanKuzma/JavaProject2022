@@ -5,15 +5,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
+import org.unibl.etf.Main;
+import org.unibl.etf.models.pawn.Pawn;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class Tile extends StackPane {
+    private static final Image diamondImage = new Image(String.valueOf(Main.class.getResource("img/diamond.png")));
     public AtomicBoolean isOccupied = new AtomicBoolean(false);
     public ImageView imageView = new ImageView();
     private static final String CSS_CLASS = "tile";
     protected GridPane grid;
     public int diamonds = 0;
+    public Pawn pawn = null;
 
 
     public Tile(GridPane grid){
@@ -34,6 +38,12 @@ public abstract class Tile extends StackPane {
     public synchronized void setImage(Image image){
         this.isOccupied.set(image != null);
         Platform.runLater(() -> imageView.setImage(image));
+    }
+
+    public synchronized void addDiamonds(int diamonds){
+        this.diamonds += diamonds;
+        if(!isOccupied.get())
+            Platform.runLater(() -> imageView.setImage(diamondImage));
     }
 
 

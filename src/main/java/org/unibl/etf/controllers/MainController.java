@@ -1,15 +1,12 @@
 package org.unibl.etf.controllers;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.ConstraintsBase;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -19,7 +16,9 @@ import javafx.util.Callback;
 import org.unibl.etf.Main;
 import org.unibl.etf.models.card.Card;
 import org.unibl.etf.models.game.Game;
+import org.unibl.etf.models.pawn.GhostPawn;
 import org.unibl.etf.models.pawn.Pawn;
+import org.unibl.etf.models.pawn.Player;
 import org.unibl.etf.models.tile.StandardTile;
 import org.unibl.etf.models.tile.Tile;
 import org.unibl.etf.models.timer.Timer;
@@ -31,6 +30,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
@@ -81,7 +81,8 @@ public class MainController implements Initializable {
 
     public static final LinkedList<Card> cardDeck = new LinkedList<>();
 
-    LinkedList<Integer> turnOrder = new LinkedList<>();
+    public LinkedList<Integer> turnOrder = new LinkedList<>();
+
 
 
 
@@ -95,8 +96,10 @@ public class MainController implements Initializable {
         //adding stack panes to every cell with image view in stack pane
         for(int i = 0; i< ConfigReader.mapSize; i++) {
             for (int j = 0; j < ConfigReader.mapSize; j++) {
-                StandardTile roadTile = new StandardTile(grid);
-                addToGrid(i, j, roadTile);
+                StandardTile tile = new StandardTile(grid);
+                addToGrid(i, j, tile);
+                Tooltip tooltip = new Tooltip("" + (i * ConfigReader.mapSize + j));
+                Tooltip.install(tile, tooltip);
             }
         }
 
@@ -121,14 +124,7 @@ public class MainController implements Initializable {
         //randomize the turn order list
         Collections.shuffle(turnOrder);
 
-        //todo remove
 
-
-        Tooltip tooltip = new Tooltip("This is a diamond");
-        Tooltip.install(map.get(25), tooltip);
-        Tooltip.uninstall(map.get(25), tooltip);
-
-        //todo remove end
 
         //getting all labels that need to be set
         List<Label> playerLabels = playerNameHBox.getChildren().stream()
@@ -142,7 +138,15 @@ public class MainController implements Initializable {
         //creating random pawns for players
         LinkedList<LinkedList<Pawn>> allPawns = new LinkedList<>();
         for(Label label : playerLabels)
-            allPawns.add(RandomGenerator.generatePawns(label.getId()));
+            allPawns.add(RandomGenerator.generatePawns(label.getId(), label.getText()));
+
+        //ordering players per turn order
+        LinkedList<Player> tempPlayers = new LinkedList<>();
+        for(Integer index : turnOrder){
+            tempPlayers.add(Game.players.get(index));
+        }
+
+        Game.players = tempPlayers;
 
         LinkedList<Pawn> reshuffledPawns = new LinkedList<>();
         LinkedList<Integer> turnOrderTemp = new LinkedList<>(turnOrder);
@@ -184,11 +188,6 @@ public class MainController implements Initializable {
 
         //creating deck of cards
         cardDeck.addAll(RandomGenerator.generateDeck());
-
-
-
-
-
     }
 
 
@@ -205,21 +204,20 @@ public class MainController implements Initializable {
             stage.initOwner(grid.getScene().getWindow());
             stage.initModality(Modality.WINDOW_MODAL);
             try {
-                Util.createWindow("views/modal-view.fxml"
-                        ,Main.TITLE + ' ' + pawnList.getSelectionModel().getSelectedItem()
+                ModalController controller = (ModalController) Util.createWindow("views/modal-view.fxml"
+                        , Main.TITLE + ' ' + pawnList.getSelectionModel().getSelectedItem()
                         , stage, Main.MIN_HEIGHT + Main.PROGRAM_TITLE_BAR_HEIGHT,
                         Main.MIN_WIDTH + Main.PROGRAM_SCROLLBAR_WIDTH,
                         true);
+                controller.showMovement(pawnList.getSelectionModel().getSelectedItem());
                 stage.show();
             } catch (IOException e) {
-                //todo logger
-                e.printStackTrace();
+                Main.LOGGER.log(Level.INFO, e.toString(), e);
             }
-            //todo pozovi novi prozor i pokazi ga
         }
 
         //deselect field
-        pawnList.getSelectionModel().select(-1);//todo magic number
+        pawnList.getSelectionModel().select(-1);
     }
 
     public synchronized void startPauseGame(ActionEvent actionEvent) {
@@ -228,9 +226,11 @@ public class MainController implements Initializable {
             //timer on the right menu
             Timer timer = new Timer(stopGame, timerLbl);
             timer.start();
-            Game game = new Game(ConfigReader.playerNames, new LinkedList<>(pawnList.getItems()),stopGame,
-                    turnOrder , map, cardDeck, cardImg, cardLbl, cardDescriptionLbl);
+            Game game = new Game(new LinkedList<>(pawnList.getItems()),stopGame,
+                    map, cardDeck, cardImg, cardLbl, cardDescriptionLbl);
             game.start();
+            GhostPawn ghostPawn = new GhostPawn(map, stopGame);
+            new Thread(ghostPawn).start();
             //set to prevent starting already started threads
             firstTimeStarted = false;
         }

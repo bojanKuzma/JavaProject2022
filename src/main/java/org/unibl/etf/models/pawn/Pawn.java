@@ -15,7 +15,7 @@ public abstract class Pawn {
     public final AtomicBoolean displayed = new AtomicBoolean(false);
     public final AtomicBoolean xReachedMaxBoundary = new AtomicBoolean(false);
     public final AtomicBoolean yReachedMaxBoundary = new AtomicBoolean(false);
-    public transient int currentPosition = ConfigReader.mapSize / 2 ;//todo magic numbers
+    public transient int currentPosition = ConfigReader.mapSize / 2 ;
     public int diamonds = 0;
     public int upperBoundary = ConfigReader.mapSize - 1;
     public int lowerBoundary = 0;
@@ -38,6 +38,10 @@ public abstract class Pawn {
 
     public void addTile(Tile tile){
         traversedTiles.add(tile);
+    }
+
+    public LinkedList<Tile> getTraversedTiles() {
+        return traversedTiles;
     }
 
     public boolean hasBeenTraversed(Tile tile){

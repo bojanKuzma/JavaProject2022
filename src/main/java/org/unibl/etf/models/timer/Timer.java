@@ -2,8 +2,10 @@ package org.unibl.etf.models.timer;
 
 import javafx.application.Platform;
 import javafx.scene.control.Label;
+import org.unibl.etf.Main;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 public class Timer extends Thread {
     private static final int WAIT_TIME = 1_000;
@@ -36,7 +38,7 @@ public class Timer extends Thread {
             try {
                 Thread.sleep(WAIT_TIME);
             } catch (InterruptedException e) {
-                e.printStackTrace();//todo logger
+                Main.LOGGER.log(Level.INFO, e.toString(), e);
             }
         }
     }

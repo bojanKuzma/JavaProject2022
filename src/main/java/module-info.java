@@ -9,6 +9,7 @@ module org.unibl.etf{
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires java.logging;
 
     exports org.unibl.etf.controllers;
     opens org.unibl.etf.controllers to javafx.fxml;

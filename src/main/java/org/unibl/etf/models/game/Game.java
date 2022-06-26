@@ -3,22 +3,31 @@ package org.unibl.etf.models.game;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import org.unibl.etf.Main;
 import org.unibl.etf.models.card.Card;
 import org.unibl.etf.models.card.Stoppable;
+import org.unibl.etf.models.pawn.Flyable;
 import org.unibl.etf.models.pawn.Pawn;
+import org.unibl.etf.models.pawn.Player;
 import org.unibl.etf.models.pawn.Speedy;
 import org.unibl.etf.models.tile.Tile;
 import org.unibl.etf.util.ConfigReader;
+import org.unibl.etf.util.RandomGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 
 public class Game extends Thread {
-    private final int TIME_WAIT = 850;
-
-    private final ArrayList<String> playerNickNames;
+    public static transient LinkedList<Player> players = new LinkedList<>();
+    private static final int END_FIELD = 5;
+    private static final int TIME_WAIT = 345;
+    private static final int TIME_WAIT_SPECIAL = 2000;
+    private static final String CSS_SELECTED = "selected";
+    private static final String CSS_HOLE = "hole";
     private final transient LinkedList<Pawn> pawns;
     private final HashMap<Integer, Tile> map;
     private final LinkedList<Card> cardDeck;
@@ -26,14 +35,13 @@ public class Game extends Thread {
     private final ImageView cardImg;
     private final Label cardLbl;
     private final AtomicBoolean stopGame;
-    private final LinkedList<Integer> turnOrder;
 
-    public Game(ArrayList<String> playerNickNames, LinkedList<Pawn> pawns, AtomicBoolean stopGame, LinkedList<Integer> turnOrder,
-                HashMap<Integer, Tile> map, LinkedList<Card> cardDeck, ImageView cardImg, Label cardLbl,
-                Label turnDescriptionLbl){
-        this.playerNickNames = playerNickNames;
+
+
+
+    public Game(LinkedList<Pawn> pawns, AtomicBoolean stopGame, HashMap<Integer, Tile> map, LinkedList<Card> cardDeck,
+                ImageView cardImg, Label cardLbl, Label turnDescriptionLbl){
         this.pawns = pawns;
-        this.turnOrder = turnOrder;
         this.map = map;
         this.cardDeck = cardDeck;
         this.cardImg = cardImg;
@@ -45,31 +53,71 @@ public class Game extends Thread {
 
     @Override
     public void run(){
-        int counter = 0;
-        while(pawns.size()>0){
+        //initialization of temporary player list and pawn list
+        LinkedList<Player> tempPlayers = players;
+        LinkedList<Pawn> tempPawns = pawns;
+
+        while(tempPlayers.size()>0){
             if((!stopGame.get())) {
+                //drawing card from deck
                 Card card = cardDeck.remove();
                 Platform.runLater(() -> {
                     cardImg.setImage(card.getImage());
                     cardLbl.setText(card.toString());
                 });
-                Pawn pawn = pawns.remove();
-                String playerName = playerNickNames.get(turnOrder.get(counter % ConfigReader.numOfPlayers)); //todo get player name by id for example playerColorYELLOW
+
+                //flag if special card is drawn
+                boolean dropped = false;
+
+                //check if player has lost all his pawns and to prevent NPE
+                while(tempPlayers.getFirst().pawns.size() <= 0)
+                    tempPlayers.remove();
+
+                //current player and his pawn
+                Player currentPlayer = tempPlayers.getFirst();
+                String playerName = currentPlayer.name;
+                Pawn pawn = currentPlayer.pawns.remove();
+
 
                 if (card instanceof Stoppable) {
                     Platform.runLater(() -> {
                         turnDescriptionLbl.setText("Na potezu je " + playerName + ", izvučena je specijalna karta," +
                                 " pojavice se rupe na " + card.getNumber() + " polja, sve figure koje ne lete propast će");
                     });
-                    //todo kreiraj rupe
-                    try {
-                        Thread.sleep(TIME_WAIT);
-                    } catch (InterruptedException e) {
-                        //todo logger
-                        e.printStackTrace();
+                    ArrayList<Integer> holes = RandomGenerator.getFields(card);
+
+                    //check pause flag
+                    while(stopGame.get());
+
+                    for(Integer hole : holes) {
+                        Tile tile = map.get(hole);
+                        tile.setId(CSS_HOLE);
+                        if(tile.pawn != null && !(tile.pawn instanceof Flyable)) {
+
+                            tile.setImage(null);
+
+                            //check for flag at the end of turn
+                            if(tile.pawn.equals(pawn))
+                                dropped = true;
+                            else
+                                for(Player p : tempPlayers)
+                                    p.pawns.remove(tile.pawn);
+                        }
+
                     }
 
+                    try {
+                        Thread.sleep(TIME_WAIT_SPECIAL);
+                    } catch (InterruptedException e) {
+                        Main.LOGGER.log(Level.WARNING, e.toString(), e);
+                    }
 
+                    //check pause flag
+                    while(stopGame.get());
+
+                    //end of special card
+                    for(Integer hole : holes)
+                        map.get(hole).setId(null);
                 }
                 else {
                     //number of fields to move in the beginning
@@ -89,19 +137,24 @@ public class Game extends Thread {
                     int previousPosition = pawn.currentPosition;
 
                     while( (tilesToMove + pawn.diamonds - fieldsTraversed) > 0){
-                        try {
-                            Thread.sleep(TIME_WAIT);
-                        } catch (InterruptedException e) {
-                            //todo logger
-                            e.printStackTrace();
-                        }
-                        //check if pawn was displayed on map
-                        if(pawn.displayed.get())
-                            nextPosition = findNext(pawn);
-                        else
-                            nextPosition = pawn.currentPosition;
 
-                        while (map.get(nextPosition).isOccupied.get() || pawn.hasBeenTraversed(map.get(nextPosition))) {
+                        //check if pawn was displayed on map
+                        if(pawn.displayed.get()) {
+                            // set the css of the tile as selected
+                            map.get(pawn.currentPosition).setId(CSS_SELECTED);
+                            nextPosition = findNext(pawn);
+                        }
+                        else {
+                            // first check if the start position displayed no need to set the css because
+                            // the pawn starts off map
+                            pawn.addTile(map.get(pawn.currentPosition));
+                            if(!map.get(pawn.currentPosition).isOccupied.get())
+                                map.get(pawn.currentPosition).setId(CSS_SELECTED);
+                            nextPosition = pawn.currentPosition;
+                        }
+
+
+                        while (map.get(nextPosition).isOccupied.get() || pawn.hasBeenTraversed(map.get(nextPosition)) && pawn.currentPosition!=nextPosition) {
                             pawn.currentPosition = nextPosition;
                             fieldsTraversed++;
                             pawn.addTile(map.get(nextPosition));
@@ -110,22 +163,38 @@ public class Game extends Thread {
 
                         Tile tile = map.get(nextPosition);
 
+                        // set the next tile css so the players sees that the selected pawn will move to there or
+                        // if no pawn is selected it starts off map
+                        tile.setId(CSS_SELECTED);
+
+                        try {
+                            Thread.sleep(TIME_WAIT);
+                        } catch (InterruptedException e) {
+                            Main.LOGGER.log(Level.WARNING, e.toString(), e);
+                        }
+
+                        //check pause flag
+                        while(stopGame.get());
+
                         if(!pawn.displayed.get()){
-                            //check pause flag
-                            if(!stopGame.get()) {
-                                tile.setImage(pawn.image);
-                                pawn.displayed.set(true);
-                            }
+                            tile.setImage(pawn.image);
+                            pawn.displayed.set(true);
                         }
                         else {
-                            //check pause flag
-                            if (!stopGame.get()) {
-                                map.get(previousPosition).setImage(null);
-                                tile.setImage(pawn.image);
-                            }
+                            map.get(previousPosition).setImage(null);
+                            tile.setImage(pawn.image);
                         }
 
+                        try {
+                            Thread.sleep(TIME_WAIT);
+                        } catch (InterruptedException e) {
+                            Main.LOGGER.log(Level.WARNING, e.toString(), e);
+                        }
 
+                        map.get(previousPosition).setId(null);
+                        map.get(previousPosition).pawn = null;
+
+                        tile.pawn = pawn;
                         pawn.currentPosition = nextPosition;
                         previousPosition = nextPosition;
                         pawn.diamonds += tile.diamonds;
@@ -136,32 +205,39 @@ public class Game extends Thread {
                         try {
                             Thread.sleep(TIME_WAIT);
                         } catch (InterruptedException e) {
-                            //todo logger
-                            e.printStackTrace();
+                            Main.LOGGER.log(Level.WARNING, e.toString(), e);
                         }
 
                         if(checkIfEnd(pawn)) {
                             pawn.reachedEnd = true;
+                            while(stopGame.get());
                             tile.setImage(null);
                             break;
                         }
 
                     }
+                    map.get(pawn.currentPosition).setId(null);
                 }
+
                 //reset diamonds
                 pawn.diamonds = 0;
 
-                if(!checkIfEnd(pawn))
-                    pawns.add(pawn);
-                cardDeck.add(card);
-                counter++;
+                if(!checkIfEnd(pawn) && !dropped) {
+                    currentPlayer.pawns.add(pawn);
+                }
 
+                //switch player from front to back
+                currentPlayer = tempPlayers.remove();
+
+                //check if the player has more pawns left and if he has move him to back
+                if(currentPlayer.pawns.size() > 0)
+                    tempPlayers.add(currentPlayer);
+
+                cardDeck.add(card);
                 }
         }
         System.out.println("Gotovo");
-        //todo kraj igre zapocni novu?
     }
-    //todo magic numbers
 
     private int getTilesToTraverse(Card c, Pawn p){
         return p instanceof Speedy ? c.getNumber() * 2 : c.getNumber();
@@ -170,12 +246,6 @@ public class Game extends Thread {
     private int findNext(Pawn p){
         int x = p.currentPosition / ConfigReader.mapSize;
         int y = p.currentPosition % ConfigReader.mapSize;
-
-        //final step in even matrix size
-        if (p.upperBoundary - p.lowerBoundary == 1)//todo magic number
-            p.yReachedMaxBoundary.set(true);
-
-
 
         if(p.upperBoundary == x)
             p.xReachedMaxBoundary.set(true);
@@ -212,22 +282,21 @@ public class Game extends Thread {
     }
 
     private boolean checkIfEnd(Pawn p){
-        boolean check = false;
         LinkedList<Tile> tiles = new LinkedList<>();
-        tiles.add(map.get(p.currentPosition-ConfigReader.mapSize-1));
-        tiles.add(map.get(p.currentPosition-ConfigReader.mapSize+1));
-        tiles.add(map.get(p.currentPosition+ConfigReader.mapSize-1));
-        tiles.add(map.get(p.currentPosition+ConfigReader.mapSize+1));
-        tiles.add(map.get(p.currentPosition+1));
+        tiles.add(map.get(p.currentPosition - ConfigReader.mapSize - 1));
+        tiles.add(map.get(p.currentPosition - ConfigReader.mapSize + 1));
+        tiles.add(map.get(p.currentPosition + ConfigReader.mapSize - 1));
+        tiles.add(map.get(p.currentPosition + ConfigReader.mapSize + 1));
+        tiles.add(map.get(p.currentPosition + 1));
+
         int counter = 0;
+
         for (Tile t : tiles) {
             if (p.hasBeenTraversed(t))
                 counter++;
         }
-        if (counter == 5)//todo magic number
-            check = true;
 
-        return check;
+        return counter == END_FIELD;
     }
 
 
