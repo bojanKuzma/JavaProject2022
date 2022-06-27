@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.unibl.etf.controllers.FileModalController">
+   <left>
+      <VBox styleClass="box" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+         <ListView fx:id="listView" onMouseClicked="#openFile" prefHeight="600.0" prefWidth="227.0" stylesheets="@../css/file-modal-view.css" VBox.vgrow="ALWAYS" />
+      </VBox>
+   </left>
+   <center>
+      <HBox BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </BorderPane.margin>
+         <TextArea fx:id="txtArea" prefHeight="600.0" prefWidth="587.0" promptText="File content" HBox.hgrow="ALWAYS">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font></TextArea>
+      </HBox>
+   </center>
+</BorderPane>

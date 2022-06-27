@@ -247,7 +247,7 @@
             </VBox.margin>
          </Label>
          <VBox alignment="CENTER" prefHeight="115.0" prefWidth="270.0" styleClass="box" VBox.vgrow="ALWAYS">
-            <Button fx:id="resultListBtn" minHeight="50.0" minWidth="190.0" mnemonicParsing="false" prefHeight="61.0" prefWidth="201.0" text="Prikaz liste fajlova sa rezultatima" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
+            <Button fx:id="resultListBtn" minHeight="50.0" minWidth="190.0" mnemonicParsing="false" onMouseClicked="#openFileModal" prefHeight="61.0" prefWidth="201.0" text="Prikaz liste fajlova sa rezultatima" textAlignment="CENTER" wrapText="true" VBox.vgrow="ALWAYS">
                <font>
                   <Font name="Segoe UI Bold" size="12.0" />
                </font>

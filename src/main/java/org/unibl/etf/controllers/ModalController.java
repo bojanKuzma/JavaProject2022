@@ -5,7 +5,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
-import org.unibl.etf.models.game.Game;
 import org.unibl.etf.models.pawn.Pawn;
 import org.unibl.etf.models.tile.StandardTile;
 import org.unibl.etf.models.tile.Tile;

@@ -1,0 +1,47 @@
+* {
+    -fx-main-background-color: #344955;
+    -fx-secondary-background-color: #2a3b45;
+    -fx-main-app-color: #f9aa33;
+    -fx-error-color: #d54150;
+    -fx-text-color: #fff;
+    -fx-border-black-color: #000;
+    -fx-player-one-color: #ff1d00;
+    -fx-player-two-color: #e4db33;
+    -fx-player-three-color: #46bc25;
+    -fx-player-four-color: #4492ff;
+}
+
+.list-view {
+    -fx-background-color: transparent, transparent;
+    -fx-background-insets: 0, 1;
+    -fx-padding: 1;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: -fx-main-app-color;
+    -fx-text-fill: -fx-text-color;
+}
+
+.list-cell {
+    -fx-text-fill: -fx-text-color;
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+}
+
+.list-cell:odd {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: -fx-main-background-color;
+}
+
+.list-cell:even {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: -fx-secondary-background-color;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: -fx-main-app-color;
+    -fx-text-fill:-fx-text-color;
+}

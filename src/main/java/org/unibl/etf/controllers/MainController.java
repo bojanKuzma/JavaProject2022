@@ -250,4 +250,21 @@ public class MainController implements Initializable {
         //start/pause game
         stopGame.getAndSet(!stopGame.get());
     }
+
+    public void openFileModal(MouseEvent mouseEvent) {
+        mouseEvent.consume();
+        Stage stage = new Stage();
+        stage.initOwner(grid.getScene().getWindow());
+        stage.initModality(Modality.WINDOW_MODAL);
+        try {
+           Util.createWindow("views/file-modal-view.fxml"
+                    , Main.TITLE + ' ' + pawnList.getSelectionModel().getSelectedItem()
+                    , stage, Main.MIN_HEIGHT + Main.PROGRAM_TITLE_BAR_HEIGHT,
+                    Main.MIN_WIDTH + Main.PROGRAM_SCROLLBAR_WIDTH,
+                    true);
+            stage.show();
+        } catch (IOException e) {
+            Main.LOGGER.log(Level.INFO, e.toString(), e);
+        }
+    }
 }
