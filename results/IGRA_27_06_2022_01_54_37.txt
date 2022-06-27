@@ -1,0 +1,21 @@
+bojanZuti
+Brza figura - 1 YELLOW    - pređeni put (3-3-11-) - stigla do cilja false
+Obična figura - 3 YELLOW    - pređeni put (3-3-11-19-27-33-39-) - stigla do cilja false
+Brza figura - 2 YELLOW    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-) - stigla do cilja false
+Leteća figura - 4 YELLOW    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-17-25-31-23-24-) - stigla do cilja true
+bojanZeleni
+Obična figura - 2 GREEN    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-) - stigla do cilja false
+Brza figura - 1 GREEN    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-17-25-31-) - stigla do cilja false
+Obična figura - 4 GREEN    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-17-25-31-23-24-) - stigla do cilja true
+Obična figura - 3 GREEN    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-) - stigla do cilja false
+bojanPlavi
+Brza figura - 1 BLUE    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-) - stigla do cilja false
+Leteća figura - 2 BLUE    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-17-25-31-23-24-) - stigla do cilja true
+Leteća figura - 4 BLUE    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-17-25-31-23-24-) - stigla do cilja true
+Leteća figura - 3 BLUE    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-17-25-31-23-24-) - stigla do cilja true
+bojanCrveni
+Obična figura - 3 RED    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-) - stigla do cilja false
+Leteća figura - 4 RED    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-17-25-31-23-24-) - stigla do cilja true
+Brza figura - 1 RED    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-) - stigla do cilja false
+Leteća figura - 2 RED    - pređeni put (3-3-11-19-27-33-39-45-37-29-21-15-9-10-18-26-32-38-30-22-16-17-25-31-23-24-) - stigla do cilja true
+Ukupno vrijeme trajanja igre: 0min 38s

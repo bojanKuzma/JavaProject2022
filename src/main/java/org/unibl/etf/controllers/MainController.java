@@ -236,8 +236,7 @@ public class MainController implements Initializable {
             //timer on the right menu
             Timer timer = new Timer(stopGame, timerLbl);
             timer.start();
-            Game game = new Game(new LinkedList<>(pawnList.getItems()),stopGame,
-                    map, cardDeck, cardImg, cardLbl, cardDescriptionLbl);
+            Game game = new Game(stopGame, map, cardDeck, cardImg, cardLbl, cardDescriptionLbl);
             game.start();
             GhostPawn ghostPawn = new GhostPawn(map, stopGame);
             Thread thread = new Thread(ghostPawn);

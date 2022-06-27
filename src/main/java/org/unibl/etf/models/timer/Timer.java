@@ -11,8 +11,8 @@ public class Timer extends Thread {
     private static final int WAIT_TIME = 1_000;
     private static final int MINUTE = 60;
 
-    private static int elapsedTimeSeconds = 0;
-    private static int elapsedTimeMinutes = 0;
+    public static int elapsedTimeSeconds = 0;
+    public static int elapsedTimeMinutes = 0;
 
     private volatile static AtomicBoolean pause;
     private volatile static Label timerLbl;

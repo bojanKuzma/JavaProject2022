@@ -11,10 +11,12 @@ import org.unibl.etf.models.pawn.Pawn;
 import org.unibl.etf.models.pawn.Player;
 import org.unibl.etf.models.pawn.Speedy;
 import org.unibl.etf.models.tile.Tile;
+import org.unibl.etf.models.timer.Timer;
 import org.unibl.etf.util.ConfigReader;
 import org.unibl.etf.util.RandomGenerator;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -22,21 +24,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 public class Game extends Thread {
     public static transient LinkedList<Player> players = new LinkedList<>();
     private static final int END_FIELD = 5;
-    private static final int TIME_WAIT = 100;
-    private static final int TIME_WAIT_SPECIAL = 100;
+    private static final int TIME_WAIT = 1000;
+    private static final int TIME_WAIT_SPECIAL = 345;
     private static final String CSS_SELECTED = "selected";
     private static final String CSS_HOLE = "hole";
-    private final transient LinkedList<Pawn> pawns;
     private final HashMap<Integer, Tile> map;
     private final LinkedList<Card> cardDeck;
     private final Label turnDescriptionLbl;
@@ -48,9 +46,8 @@ public class Game extends Thread {
 
 
 
-    public Game(LinkedList<Pawn> pawns, AtomicBoolean stopGame, HashMap<Integer, Tile> map, LinkedList<Card> cardDeck,
-                ImageView cardImg, Label cardLbl, Label turnDescriptionLbl){
-        this.pawns = pawns;
+    public Game(AtomicBoolean stopGame, HashMap<Integer, Tile> map, LinkedList<Card> cardDeck, ImageView cardImg,
+                Label cardLbl, Label turnDescriptionLbl){
         this.map = map;
         this.cardDeck = cardDeck;
         this.cardImg = cardImg;
@@ -64,7 +61,6 @@ public class Game extends Thread {
     public void run(){
         //initialization of temporary player list and pawn list
         LinkedList<Player> tempPlayers = players;
-        LinkedList<Pawn> tempPawns = pawns;
 
         while(tempPlayers.size()>0){
             if((!stopGame.get())) {
@@ -362,22 +358,23 @@ public class Game extends Thread {
         DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         Date date = new Date();
 
-        Path path = Paths.get("results/IGRA_" + dateFormat.format(date) + ".txt");
+        Path path = Paths.get("results" + File.separator + "IGRA_" + dateFormat.format(date) + ".txt");
         try(BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)){
             results.forEach((k,v) -> {
                 try {
                     writer.write(k);
-                    writer.write('\n');
+                    writer.write(System.lineSeparator());
 
                     for(String result : v) {
                         writer.write(result);
-                        writer.write('\n');
+                        writer.write(System.lineSeparator());
                     }
+
                 } catch (IOException e) {
                     Main.LOGGER.log(Level.SEVERE, e.toString(), e);
                 }
             });
-
+            writer.write("Ukupno vrijeme trajanja igre: " + Timer.elapsedTimeMinutes + "min " + Timer.elapsedTimeSeconds + "s");
         }catch(IOException ex){
             Main.LOGGER.log(Level.SEVERE, ex.toString(), ex);
         }
