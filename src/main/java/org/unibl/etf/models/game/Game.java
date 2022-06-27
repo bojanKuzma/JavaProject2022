@@ -31,10 +31,11 @@ import java.util.logging.Level;
 public class Game extends Thread {
     public static transient LinkedList<Player> players = new LinkedList<>();
     private static final int END_FIELD = 5;
-    private static final int TIME_WAIT = 1000;
-    private static final int TIME_WAIT_SPECIAL = 345;
+    private static final int TIME_WAIT = 35;
+    private static final int TIME_WAIT_SPECIAL = 100;
     private static final String CSS_SELECTED = "selected";
     private static final String CSS_HOLE = "hole";
+    public static Label numberOfGamesLbl;
     private final HashMap<Integer, Tile> map;
     private final LinkedList<Card> cardDeck;
     private final Label turnDescriptionLbl;
@@ -222,6 +223,7 @@ public class Game extends Thread {
                         }
                         else {
                             map.get(previousPosition).setImage(null);
+                            map.get(previousPosition).pawn = null;
                             tile.setImage(pawn.image);
                         }
 
@@ -378,6 +380,17 @@ public class Game extends Thread {
         }catch(IOException ex){
             Main.LOGGER.log(Level.SEVERE, ex.toString(), ex);
         }
+        Platform.runLater(() -> {
+            try {
+                numberOfGamesLbl.setText("Trenutni broj odigranih igara: " +
+                        Files.list(Paths.get("results"))
+                                .filter(p -> p.toFile().isFile())
+                                .count());
+                turnDescriptionLbl.setText("Igra je završena");
+            } catch (IOException e) {
+                Main.LOGGER.log(Level.WARNING, e.toString(), e);
+            }
+        });
     }
 
 

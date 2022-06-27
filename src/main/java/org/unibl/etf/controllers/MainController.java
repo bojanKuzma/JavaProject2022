@@ -98,6 +98,7 @@ public class MainController implements Initializable {
         } catch (IOException e) {
             Main.LOGGER.log(Level.WARNING, e.toString(), e);
         }
+        Game.numberOfGamesLbl = numberOfGamesLbl;
 
         //initializing grid
         Util.removeGridConstraints(grid.getRowCount() - ConfigReader.mapSize, grid.getRowConstraints());
